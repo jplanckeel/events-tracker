@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	log "log/slog"
+	"log/slog"
 
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 	"github.com/jplanckeel/events-tracker/pkg/services"
@@ -76,7 +76,19 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Any("new event created", query.Title)
+
+	slog.Info(
+		"event created",
+		"title", eventCreate.Title,
+		"id", eventCreate.Metadata.Id,
+		"event_message", eventCreate.Attributes.Message,
+		"source", eventCreate.Attributes.Source,
+		"type", eventCreate.Attributes.Type,
+		"priority", eventCreate.Attributes.Priority,
+		"service", eventCreate.Attributes.Service,
+		"status", eventCreate.Attributes.Status,
+		"pull-request", eventCreate.Links.PullRequestLink,
+	)
 
 	utils.WriteResponse(w, http.StatusCreated, eventCreate)
 }
@@ -93,7 +105,7 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 func (e *EventHandlers) List(w http.ResponseWriter, r *http.Request) {
 	Events, err := e.eventService.List()
 	if err != nil {
-		log.Error("%s", err)
+		slog.Error("%s", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
