@@ -129,6 +129,20 @@ const docTemplate = `{
                 }
             }
         },
+        "event.EventMetadata": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.CreateDTO": {
             "type": "object",
             "properties": {
@@ -145,7 +159,22 @@ const docTemplate = `{
             }
         },
         "services.EventOutput": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "attributes": {
+                    "$ref": "#/definitions/event.EventAttributes"
+                },
+                "links": {
+                    "$ref": "#/definitions/event.EventLinks"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/event.EventMetadata"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Deployment service lambda"
+                }
+            }
         }
     }
 }`

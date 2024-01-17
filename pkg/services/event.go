@@ -8,7 +8,10 @@ import (
 )
 
 type EventOutput struct {
-	event v1.Event
+	Title      string `json:"title" example:"Deployment service lambda"`
+	Attributes v1.EventAttributes
+	Links      v1.EventLinks
+	Metadata   v1.EventMetadata
 }
 
 type EventListOutput []EventOutput
@@ -35,25 +38,23 @@ func (e *EventService) Create(event *v1.Event) (*EventOutput, error) {
 	}
 
 	r := &EventOutput{
-		event: v1.Event{
-			Title: create.Title,
-			Attributes: v1.EventAttributes{
-				Message:   create.Attributes.Message,
-				Source:    create.Attributes.Source,
-				Type:      create.Attributes.Type,
-				Priority:  create.Attributes.Priority,
-				RelatedId: create.Attributes.RelatedId,
-				Service:   create.Attributes.Service,
-				Status:    create.Attributes.Status,
-			},
-			Links: v1.EventLinks{
-				PullRequestLink: create.Links.PullRequestLink,
-			},
-			Metadata: v1.EventMetadata{
-				CreatedAt: create.Metadata.CreatedAt,
-				Duration:  create.Metadata.Duration,
-				Id:        create.Metadata.Id,
-			},
+		Title: create.Title,
+		Attributes: v1.EventAttributes{
+			Message:   create.Attributes.Message,
+			Source:    create.Attributes.Source,
+			Type:      create.Attributes.Type,
+			Priority:  create.Attributes.Priority,
+			RelatedId: create.Attributes.RelatedId,
+			Service:   create.Attributes.Service,
+			Status:    create.Attributes.Status,
+		},
+		Links: v1.EventLinks{
+			PullRequestLink: create.Links.PullRequestLink,
+		},
+		Metadata: v1.EventMetadata{
+			CreatedAt: create.Metadata.CreatedAt,
+			Duration:  create.Metadata.Duration,
+			Id:        create.Metadata.Id,
 		},
 	}
 
@@ -69,9 +70,7 @@ func (e *EventService) List() (*EventListOutput, error) {
 	result := make(EventListOutput, 0)
 	for _, event := range events.Events {
 		fmt.Println(event)
-		result = append(result, EventOutput{
-			event: event,
-		})
+		result = append(result, EventOutput(event))
 	}
 
 	return &result, nil

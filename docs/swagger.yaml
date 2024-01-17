@@ -29,6 +29,15 @@ definitions:
         example: https://github.com/jplanckeel/events-tracker/pull/240
         type: string
     type: object
+  event.EventMetadata:
+    properties:
+      created_at:
+        type: string
+      duration:
+        type: integer
+      id:
+        type: string
+    type: object
   handlers.CreateDTO:
     properties:
       attributes:
@@ -40,6 +49,16 @@ definitions:
         type: string
     type: object
   services.EventOutput:
+    properties:
+      attributes:
+        $ref: '#/definitions/event.EventAttributes'
+      links:
+        $ref: '#/definitions/event.EventLinks'
+      metadata:
+        $ref: '#/definitions/event.EventMetadata'
+      title:
+        example: Deployment service lambda
+        type: string
     type: object
 info:
   contact: {}
