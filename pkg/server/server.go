@@ -1,16 +1,18 @@
 package server
 
 import (
+	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	log "github.com/sirupsen/logrus"
 
 	_ "github.com/jplanckeel/events-tracker/docs"
 	httpSwagger "github.com/swaggo/http-swagger"
 
-	"github.com/jplanckeel/events-tracker/pkg/config"
 	"github.com/jplanckeel/events-tracker/pkg/handlers"
 )
 
@@ -35,6 +37,9 @@ func NewServer(statusHandler handlers.IStatusHandlers, eventHandlers handlers.IE
 }
 
 func (s *Server) Initialize() error {
+
+	var listenAddress string = "0.0.0.0:9101"
+
 	router := mux.NewRouter()
 
 	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
@@ -52,7 +57,23 @@ func (s *Server) Initialize() error {
 	apiv1.HandleFunc("/", s.eventHandlers.List).Methods(http.MethodGet)
 	apiv1.HandleFunc("/", s.eventHandlers.Create).Methods(http.MethodPost)
 
-	log.Info("Listen on port: ", config.Config.Port)
+	//define logger for http server error
+	handler := slog.NewJSONHandler(os.Stdout, nil)
+	httplogger := slog.NewLogLogger(handler, slog.LevelError)
 
-	return http.ListenAndServe(":"+config.Config.Port, router)
+	server := &http.Server{
+		Addr:              listenAddress,
+		ReadHeaderTimeout: 2 * time.Second, // Fix CWE-400 Potential Slowloris Attack because ReadHeaderTimeout is not configured in the http.Server
+		Handler:           router,
+		ErrorLog:          httplogger,
+	}
+
+	slog.Info(fmt.Sprintf("events-tracker server start and listen on %s", listenAddress))
+
+	return server.ListenAndServe()
+}
+
+func init() {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
 }

@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
+	log "log/slog"
+
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 	"github.com/jplanckeel/events-tracker/pkg/services"
 	"github.com/jplanckeel/events-tracker/pkg/utils"
-	log "github.com/sirupsen/logrus"
 )
 
 type CreateDTO struct {
@@ -75,7 +76,8 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Info("New event created: ", eventCreate)
+	log.Any("new event created", query.Title)
+
 	utils.WriteResponse(w, http.StatusCreated, eventCreate)
 }
 
@@ -91,7 +93,7 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 func (e *EventHandlers) List(w http.ResponseWriter, r *http.Request) {
 	Events, err := e.eventService.List()
 	if err != nil {
-		log.Error(err)
+		log.Error("%s", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 

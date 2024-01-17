@@ -28,4 +28,5 @@ var serv = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serv)
+
 }

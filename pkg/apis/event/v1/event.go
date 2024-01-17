@@ -15,9 +15,9 @@ type EventAttributes struct {
 }
 
 type EventMetadata struct {
-	CreatedAt time.Time     `json:"created_at"`
-	Duration  time.Duration `json:"duration"`
-	Id        string        `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	Duration  int       `json:"duration"`
+	Id        string    `json:"id"`
 }
 
 type EventLinks struct {
