@@ -79,7 +79,13 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// Validation failed, handle the error
 		errors := err.(validator.ValidationErrors)
-		http.Error(w, fmt.Sprintf("validation error: %s", errors), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("validation %s", errors), http.StatusBadRequest)
+		return
+	}
+
+	err = utils.ValidateValues(event)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("validation %s", err), http.StatusBadRequest)
 		return
 	}
 
