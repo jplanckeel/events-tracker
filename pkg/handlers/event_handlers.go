@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"log/slog"
 
+	"github.com/go-playground/validator/v10"
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 	"github.com/jplanckeel/events-tracker/pkg/services"
 	"github.com/jplanckeel/events-tracker/pkg/utils"
@@ -71,6 +73,16 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 		},
 		Metadata: v1.EventMetadata{},
 	}
+
+	v := validator.New()
+	err = v.Struct(event)
+	if err != nil {
+		// Validation failed, handle the error
+		errors := err.(validator.ValidationErrors)
+		http.Error(w, fmt.Sprintf("validation error: %s", errors), http.StatusBadRequest)
+		return
+	}
+
 	eventCreate, err := e.eventService.Create(event)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

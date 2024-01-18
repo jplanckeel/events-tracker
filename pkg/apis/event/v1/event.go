@@ -5,13 +5,13 @@ import (
 )
 
 type EventAttributes struct {
-	Message   string `json:"message" example:"deployment service lambda version v0.0.0"`
-	Source    string `json:"source" example:"github_action"`
-	Type      string `json:"type" example:"event"`
-	Priority  string `json:"priority" example:"P1"`
+	Message   string `json:"message" example:"deployment service lambda version v0.0.0" validate:"required"`
+	Source    string `json:"source" example:"github_action" validate:"required"`
+	Type      string `json:"type" example:"deployment" validate:"required"`
+	Priority  string `json:"priority" example:"P1" validate:"required"`
 	RelatedId string `json:"related_id" example:"53aa35c8-e659-44b2-882f-f6056e443c99"`
-	Service   string `json:"service" example:"service-event"`
-	Status    string `json:"status" example:"success"`
+	Service   string `json:"service" example:"service-event" validate:"required"`
+	Status    string `json:"status" example:"success" validate:"required"`
 }
 
 type EventMetadata struct {
@@ -25,7 +25,7 @@ type EventLinks struct {
 }
 
 type Event struct {
-	Title      string `json:"title" example:"Deployment service lambda"`
+	Title      string `json:"title" example:"Deployment service lambda" validate:"required"`
 	Attributes EventAttributes
 	Links      EventLinks
 	Metadata   EventMetadata
