@@ -61,12 +61,13 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	event := &v1.Event{
 		Title: query.Title,
 		Attributes: v1.EventAttributes{
-			Message:  query.Attributes.Message,
-			Source:   query.Attributes.Source,
-			Type:     query.Attributes.Type,
-			Priority: query.Attributes.Priority,
-			Service:  query.Attributes.Service,
-			Status:   query.Attributes.Status,
+			Message:   query.Attributes.Message,
+			Source:    query.Attributes.Source,
+			Type:      query.Attributes.Type,
+			Priority:  query.Attributes.Priority,
+			Service:   query.Attributes.Service,
+			Status:    query.Attributes.Status,
+			RelatedId: query.Attributes.RelatedId,
 		},
 		Links: v1.EventLinks{
 			PullRequestLink: query.Links.PullRequestLink,

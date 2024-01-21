@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"time"
 
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 )
@@ -32,6 +33,19 @@ func NewEventService(EventRepository v1.EventInterface) IEventService {
 }
 
 func (e *EventService) Create(event *v1.Event) (*EventOutput, error) {
+	if event.Attributes.RelatedId != "" {
+		// attributes.relatedId is present
+		relatedEvent, err := e.EventRepository.Get(context.Background(), map[string]interface{}{"metadata.id": &event.Attributes.RelatedId})
+		if err != nil {
+			if err.Error() == "mongo: no documents in result" {
+				return nil, fmt.Errorf("no event found in events-tracker for attributes.related_id %s", event.Attributes.RelatedId)
+			}
+			return nil, err
+		}
+		event.Metadata.Duration = time.Since(relatedEvent.Metadata.CreatedAt).Seconds()
+
+	}
+
 	create, err := e.EventRepository.Create(context.Background(), event)
 	if err != nil {
 		return nil, err

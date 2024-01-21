@@ -16,7 +16,7 @@ type EventAttributes struct {
 
 type EventMetadata struct {
 	CreatedAt time.Time `json:"created_at"`
-	Duration  int       `json:"duration"`
+	Duration  float64   `json:"duration"`
 	Id        string    `json:"id"`
 }
 

@@ -18,6 +18,7 @@ type EventGetter interface {
 type EventInterface interface {
 	Create(ctx context.Context, Event *Event) (*Event, error)
 	List(ctx context.Context) (*EventList, error)
+	Get(ctx context.Context, EventGet map[string]interface{}) (*Event, error)
 }
 
 // eventsTracker implements EventInterface
@@ -45,7 +46,7 @@ func (c *eventsTracker) List(ctx context.Context) (results *EventList, err error
 	return
 }
 
-// Create takes the representation of a Event and creates it.  Returns the server's representation of the Event, and an error, if there is any.
+// Create takes the representation of an Event and creates it.  Returns the server's representation of the Event, and an error, if there is any.
 func (c *eventsTracker) Create(ctx context.Context, EventInsert *Event) (result *Event, err error) {
 	result = &Event{}
 	id := uuid.New()
@@ -62,5 +63,13 @@ func (c *eventsTracker) Create(ctx context.Context, EventInsert *Event) (result 
 		panic(err)
 	}
 
+	return
+}
+
+// Get an Event and creates it.  Returns the server's representation of the Event, and an error, if there is any.
+func (c *eventsTracker) Get(ctx context.Context, EventGet map[string]interface{}) (result *Event, err error) {
+	result = &Event{}
+
+	err = c.collection.FindOne(context.TODO(), EventGet).Decode(&result)
 	return
 }
