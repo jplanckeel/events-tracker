@@ -20,8 +20,15 @@ definitions:
         example: success
         type: string
       type:
-        example: event
+        example: deployment
         type: string
+    required:
+    - message
+    - priority
+    - service
+    - source
+    - status
+    - type
     type: object
   event.EventLinks:
     properties:
@@ -34,7 +41,7 @@ definitions:
       created_at:
         type: string
       duration:
-        type: integer
+        type: number
       id:
         type: string
     type: object

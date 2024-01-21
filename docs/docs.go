@@ -89,6 +89,14 @@ const docTemplate = `{
     "definitions": {
         "event.EventAttributes": {
             "type": "object",
+            "required": [
+                "message",
+                "priority",
+                "service",
+                "source",
+                "status",
+                "type"
+            ],
             "properties": {
                 "message": {
                     "type": "string",
@@ -116,7 +124,7 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string",
-                    "example": "event"
+                    "example": "deployment"
                 }
             }
         },
@@ -136,7 +144,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "duration": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "id": {
                     "type": "string"
