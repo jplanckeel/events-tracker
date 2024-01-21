@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type EventGetter interface {
@@ -19,6 +20,7 @@ type EventInterface interface {
 	Create(ctx context.Context, Event *Event) (*Event, error)
 	List(ctx context.Context) (*EventList, error)
 	Get(ctx context.Context, EventGet map[string]interface{}) (*Event, error)
+	Count(ctx context.Context) (int64, error)
 }
 
 // eventsTracker implements EventInterface
@@ -71,5 +73,12 @@ func (c *eventsTracker) Get(ctx context.Context, EventGet map[string]interface{}
 	result = &Event{}
 
 	err = c.collection.FindOne(context.TODO(), EventGet).Decode(&result)
+	return
+}
+
+// Get an Event and creates it.  Returns the server's representation of the Event, and an error, if there is any.
+func (c *eventsTracker) Count(ctx context.Context) (count int64, err error) {
+	opts := options.Count().SetHint("_id_")
+	count, err = c.collection.CountDocuments(context.TODO(), bson.D{}, opts)
 	return
 }

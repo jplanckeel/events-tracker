@@ -6,7 +6,11 @@ import (
 	"time"
 
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 )
+
+var ch chan<- *v1.Event
 
 type EventOutput struct {
 	Title      string `json:"title" example:"Deployment service lambda"`
@@ -20,6 +24,7 @@ type EventListOutput []EventOutput
 type IEventService interface {
 	Create(event *v1.Event) (*EventOutput, error)
 	List() (*EventListOutput, error)
+	Count() (int64, error)
 }
 
 type EventService struct {
@@ -50,6 +55,8 @@ func (e *EventService) Create(event *v1.Event) (*EventOutput, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	go metric(event)
 
 	r := &EventOutput{
 		Title: create.Title,
@@ -88,6 +95,25 @@ func (e *EventService) List() (*EventListOutput, error) {
 	}
 
 	return &result, nil
+}
+
+func (e *EventService) Count() (int64, error) {
+	count, err := e.EventRepository.Count(context.Background())
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+var metricEvents = promauto.NewCounterVec(prometheus.CounterOpts{
+	Name: "events_tracker_services",
+	Help: "Number of events in events-tracker by service and type.",
+},
+	[]string{"service", "type", "priority", "status"})
+
+func metric(e *v1.Event) {
+	prometheus.Register(metricEvents)
+	metricEvents.WithLabelValues(e.Attributes.Service, e.Attributes.Type, e.Attributes.Priority, e.Attributes.Status).Add(1)
 }
 
 /*

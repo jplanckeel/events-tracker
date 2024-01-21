@@ -2,9 +2,11 @@ package cmd
 
 import (
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
+	"github.com/jplanckeel/events-tracker/pkg/exporter"
 	"github.com/jplanckeel/events-tracker/pkg/handlers"
 	"github.com/jplanckeel/events-tracker/pkg/server"
 	"github.com/jplanckeel/events-tracker/pkg/services"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +22,9 @@ var serv = &cobra.Command{
 		eventService := services.NewEventService(collection)
 		eventHandler := handlers.NewEventHandlers(eventService)
 		statusHandler := handlers.NewStatusHandlers()
+
+		collector := exporter.NewEventsTrackerCollector(eventService)
+		prometheus.MustRegister(collector)
 
 		return server.NewServer(statusHandler, eventHandler).Initialize()
 
