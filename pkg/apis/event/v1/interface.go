@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -18,7 +19,7 @@ type EventGetter interface {
 // EventInterface has methods to work with Event resources.
 type EventInterface interface {
 	Create(ctx context.Context, Event *Event) (*Event, error)
-	List(ctx context.Context) (*EventList, error)
+	List(ctx context.Context) ([]Event, error)
 	Get(ctx context.Context, EventGet map[string]interface{}) (*Event, error)
 	Count(ctx context.Context) (int64, error)
 }
@@ -36,13 +37,14 @@ func newEventsTracker(c *EventsV1Client, collection string) *eventsTracker {
 }
 
 // List takes label and field selectors, and returns the list of Events that match those selectors.
-func (c *eventsTracker) List(ctx context.Context) (results *EventList, err error) {
-	results = &EventList{}
+func (c *eventsTracker) List(ctx context.Context) (results []Event, err error) {
 	cursor, err := c.collection.Find(context.TODO(), bson.D{})
 
+	//var results []Event
 	// check for errors in the conversion
 	if err = cursor.All(context.TODO(), &results); err != nil {
-		panic(err)
+		fmt.Println(err)
+		//panic(err)
 	}
 
 	return

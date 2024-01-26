@@ -94,8 +94,7 @@ func (e *EventService) List() (*EventListOutput, error) {
 	}
 
 	result := make(EventListOutput, 0)
-	for _, event := range events.Events {
-		fmt.Println(event)
+	for _, event := range events {
 		result = append(result, EventOutput(event))
 	}
 

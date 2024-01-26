@@ -31,6 +31,9 @@ type Event struct {
 	Metadata   EventMetadata
 }
 
+/*
+// unsued for the moment
 type EventList struct {
 	Events []Event
 }
+*/
