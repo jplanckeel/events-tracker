@@ -84,6 +84,44 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/events/{id}": {
+            "get": {
+                "description": "Get an Events by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "event"
+                ],
+                "summary": "Get an Events by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "xxxxx-xxxxxx-xxxxx-xxxxxx",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/services.EventOutput"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

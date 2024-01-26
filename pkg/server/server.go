@@ -56,6 +56,7 @@ func (s *Server) Initialize() error {
 	apiv1 := router.PathPrefix("/api/v1/events").Subrouter()
 	apiv1.HandleFunc("/", s.eventHandlers.List).Methods(http.MethodGet)
 	apiv1.HandleFunc("/", s.eventHandlers.Create).Methods(http.MethodPost)
+	apiv1.HandleFunc("/{id}", s.eventHandlers.GetId).Methods(http.MethodGet)
 
 	//define logger for http server error
 	handler := slog.NewJSONHandler(os.Stdout, nil)

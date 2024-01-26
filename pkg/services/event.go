@@ -10,7 +10,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-var ch chan<- *v1.Event
+var metricEvents = promauto.NewCounterVec(prometheus.CounterOpts{
+	Name: "events_tracker_services",
+	Help: "Number of events in events-tracker by service and type.",
+},
+	[]string{"service", "type", "priority", "status"})
 
 type EventOutput struct {
 	Title      string `json:"title" example:"Deployment service lambda"`
@@ -25,6 +29,7 @@ type IEventService interface {
 	Create(event *v1.Event) (*EventOutput, error)
 	List() (*EventListOutput, error)
 	Count() (int64, error)
+	GetId(id string) (*v1.Event, error)
 }
 
 type EventService struct {
@@ -56,7 +61,7 @@ func (e *EventService) Create(event *v1.Event) (*EventOutput, error) {
 		return nil, err
 	}
 
-	go metric(event)
+	go metricCreate(event)
 
 	r := &EventOutput{
 		Title: create.Title,
@@ -105,30 +110,16 @@ func (e *EventService) Count() (int64, error) {
 	return count, nil
 }
 
-var metricEvents = promauto.NewCounterVec(prometheus.CounterOpts{
-	Name: "events_tracker_services",
-	Help: "Number of events in events-tracker by service and type.",
-},
-	[]string{"service", "type", "priority", "status"})
+func (e *EventService) GetId(id string) (*v1.Event, error) {
+	event, err := e.EventRepository.Get(context.Background(), map[string]interface{}{"metadata.id": id})
+	if err != nil {
+		return nil, fmt.Errorf("no event found in events-tracker for id %s", id)
+	}
 
-func metric(e *v1.Event) {
+	return event, nil
+}
+
+func metricCreate(e *v1.Event) {
 	prometheus.Register(metricEvents)
 	metricEvents.WithLabelValues(e.Attributes.Service, e.Attributes.Type, e.Attributes.Priority, e.Attributes.Status).Add(1)
 }
-
-/*
-func (e *EventService) Get(name string) (*EventOutput, error) {
-	event, err := e.EventRepository.Get(context.Background(), name, metav1.GetOptions{})
-	if err != nil {
-		return nil, err
-	}
-
-	result := &EventOutput{
-		Name: event.Name,
-		EventSpec: v1.EventSpec{
-		},
-	}
-
-	return result, nil
-}
-*/

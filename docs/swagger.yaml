@@ -119,4 +119,29 @@ paths:
       summary: Create an Event
       tags:
       - event
+  /api/v1/events/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an Events by id
+      parameters:
+      - description: xxxxx-xxxxxx-xxxxx-xxxxxx
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.EventOutput'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get an Events by id
+      tags:
+      - event
 swagger: "2.0"

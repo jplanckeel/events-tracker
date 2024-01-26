@@ -8,6 +8,7 @@ import (
 	"log/slog"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/mux"
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 	"github.com/jplanckeel/events-tracker/pkg/services"
 	"github.com/jplanckeel/events-tracker/pkg/utils"
@@ -28,6 +29,7 @@ type UpdateDTO struct {
 type IEventHandlers interface {
 	Create(w http.ResponseWriter, r *http.Request)
 	List(w http.ResponseWriter, r *http.Request)
+	GetId(w http.ResponseWriter, r *http.Request)
 }
 
 type EventHandlers struct {
@@ -131,7 +133,6 @@ func (e *EventHandlers) List(w http.ResponseWriter, r *http.Request) {
 	utils.WriteResponse(w, http.StatusOK, Events)
 }
 
-/*
 // Get
 // @Summary      Get an Events by id
 // @Description  Get an Events by id
@@ -142,15 +143,15 @@ func (e *EventHandlers) List(w http.ResponseWriter, r *http.Request) {
 // @Success      200  {object}  services.EventOutput
 // @Failure      404  {object}  string
 // @Router       /api/v1/events/{id} [get]
-func (e *EventHandlers) Get(w http.ResponseWriter, r *http.Request) {
+func (e *EventHandlers) GetId(w http.ResponseWriter, r *http.Request) {
 	var EventId = mux.Vars(r)["id"]
 
-	event, err := e.eventService.Get(EventId)
+	event, err := e.eventService.GetId(EventId)
 	if err != nil {
-		log.Error(err)
+		slog.Error("%s", err)
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
 	utils.WriteResponse(w, http.StatusOK, event)
-}*/
+}
