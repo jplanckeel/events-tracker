@@ -29,7 +29,7 @@ func NewClient() EventsV1Client {
 	// prepare the uri for the connection
 	if c.DatabaseUsername != "" && c.DatabasePassword != "" {
 		uri = fmt.Sprintf(
-			"mongodb://%s:%s@%s:%s/%s?maxPoolSize=20&?authMechanism=PLAIN",
+			"mongodb://%s:%s@%s:%s/%s?maxPoolSize=20&tls=true&authMechanism=PLAIN",
 			c.DatabaseUsername,
 			c.DatabasePassword,
 			c.Database,
