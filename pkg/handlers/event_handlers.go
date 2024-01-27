@@ -57,6 +57,7 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	var query CreateDTO
 	err := json.NewDecoder(r.Body).Decode(&query)
 	if err != nil {
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -82,19 +83,23 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	err = v.Struct(event)
 	if err != nil {
 		// Validation failed, handle the error
-		errors := err.(validator.ValidationErrors)
-		http.Error(w, fmt.Sprintf("validation %s", errors), http.StatusBadRequest)
+		err = fmt.Errorf("validation %s", err.(validator.ValidationErrors))
+		slog.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = utils.ValidateValues(event)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("validation %s", err), http.StatusBadRequest)
+		err = fmt.Errorf("validation %s", err)
+		slog.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	eventCreate, err := e.eventService.Create(event)
 	if err != nil {
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -127,7 +132,7 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 func (e *EventHandlers) List(w http.ResponseWriter, r *http.Request) {
 	Events, err := e.eventService.List()
 	if err != nil {
-		slog.Error("%s", err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
@@ -149,7 +154,7 @@ func (e *EventHandlers) GetId(w http.ResponseWriter, r *http.Request) {
 
 	event, err := e.eventService.GetId(EventId)
 	if err != nil {
-		slog.Error("%s", err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -185,7 +190,7 @@ func (e *EventHandlers) Search(w http.ResponseWriter, r *http.Request) {
 
 	event, err := e.eventService.Search(p)
 	if err != nil {
-		slog.Error("%s", err)
+		slog.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}

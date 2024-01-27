@@ -2,7 +2,6 @@ package event
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -44,8 +43,7 @@ func (c *eventsTracker) List(ctx context.Context) (results []Event, err error) {
 	//var results []Event
 	// check for errors in the conversion
 	if err = cursor.All(context.TODO(), &results); err != nil {
-		fmt.Println(err)
-		//panic(err)
+		return
 	}
 
 	return
@@ -65,7 +63,7 @@ func (c *eventsTracker) Create(ctx context.Context, EventInsert *Event) (result 
 
 	err = c.collection.FindOne(context.TODO(), map[string]interface{}{"metadata.id": &EventInsert.Metadata.Id}).Decode(&result)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	return
@@ -89,25 +87,14 @@ func (c *eventsTracker) Count(ctx context.Context) (count int64, err error) {
 // Search and returns the list of Events that match those selectors.
 func (c *eventsTracker) Search(ctx context.Context, filter map[string]interface{}) (results []Event, err error) {
 
-	fmt.Println(filter)
-
-	// Créer une date au format ISO
-	//dateIso := "2024-01-20T00:00:00Z"
-	//parsedDate, err := time.Parse(time.RFC3339, dateIso)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//debug := bson.D{{Key: "metadata.createdat", Value: bson.D{{Key: "$gte", Value: parsedDate}}}}
-	//fmt.Println(debug)
 	cursor, err := c.collection.Find(context.TODO(), filter)
 
 	//var results []Event
 	// check for errors in the conversion
 	if err = cursor.All(context.TODO(), &results); err != nil {
-		fmt.Println(err)
-		//panic(err)
+		return
 	}
-	//defer cursor.Close(context.Background())
+	defer cursor.Close(context.Background())
 
 	return
 }
