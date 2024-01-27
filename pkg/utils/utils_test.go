@@ -2,11 +2,14 @@ package utils
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 )
+
+var loc = time.Now().Local().Location()
 
 func TestValidateValues(t *testing.T) {
 
@@ -208,6 +211,84 @@ func TestValidateValuesError(t *testing.T) {
 
 	for _, testCase := range testCases {
 		e := ValidateValues(testCase.event)
+		assert.Error(t, e, testCase.name)
+	}
+}
+
+func TestParseDate(t *testing.T) {
+
+	testCases := []struct {
+		name string
+		date string
+	}{
+		{
+			name: "OK - Test layout 2024-01-20",
+			date: "2024-01-20",
+		},
+		{
+			name: "OK - Test layout 2024-01-20T15",
+			date: "2024-01-20T15",
+		},
+		{
+			name: "OK - Test layout 2024-01-20T15:01",
+			date: "2024-01-20T15:01",
+		},
+		{
+			name: "OK - Test layout 2024-01-20T15:01:05",
+			date: "2024-01-20T15:01:05",
+		},
+		{
+			name: "OK - Test layout 2024-01-21T12:09:52.496+00:00",
+			date: "2024-01-21T12:09:52.496",
+		},
+		{
+			name: "OK - Test layout 2024-01-21T12:09:52.496Z",
+			date: "2024-01-21T12:09:52.496Z",
+		},
+	}
+
+	for _, testCase := range testCases {
+		_, e := parseDate(testCase.date)
+		assert.NoError(t, e, testCase.name)
+	}
+}
+
+func TestCheckDateInverted(t *testing.T) {
+
+	testCases := []struct {
+		name  string
+		start time.Time
+		end   time.Time
+	}{
+		{
+			name:  "OK - Test layout 2024-01-20",
+			start: time.Date(2022, time.March, 1, 0, 0, 0, 0, loc),
+			end:   time.Date(2022, time.March, 2, 0, 0, 0, 0, loc),
+		},
+	}
+
+	for _, testCase := range testCases {
+		e := checkDateInverted(testCase.start, testCase.end)
+		assert.NoError(t, e, testCase.name)
+	}
+}
+
+func TestCheckDateInvertedError(t *testing.T) {
+
+	testCases := []struct {
+		name  string
+		start time.Time
+		end   time.Time
+	}{
+		{
+			name:  "OK - Test layout 2024-01-20",
+			start: time.Date(2022, time.March, 2, 0, 0, 0, 0, loc),
+			end:   time.Date(2022, time.March, 1, 0, 0, 0, 0, loc),
+		},
+	}
+
+	for _, testCase := range testCases {
+		e := checkDateInverted(testCase.start, testCase.end)
 		assert.Error(t, e, testCase.name)
 	}
 }

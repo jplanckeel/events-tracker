@@ -6,6 +6,7 @@ import (
 	"time"
 
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
+	"github.com/jplanckeel/events-tracker/pkg/utils"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
@@ -25,11 +26,21 @@ type EventOutput struct {
 
 type EventListOutput []EventOutput
 
+type EventSearch struct {
+	Source    string
+	EventType string
+	Priority  string
+	Status    string
+	StartDate string
+	EndDate   string
+}
+
 type IEventService interface {
 	Create(event *v1.Event) (*EventOutput, error)
 	List() (*EventListOutput, error)
 	Count() (int64, error)
 	GetId(id string) (*v1.Event, error)
+	Search(query *v1.EventSearch) (*EventListOutput, error)
 }
 
 type EventService struct {
@@ -116,6 +127,26 @@ func (e *EventService) GetId(id string) (*v1.Event, error) {
 	}
 
 	return event, nil
+}
+
+func (e *EventService) Search(Query *v1.EventSearch) (*EventListOutput, error) {
+
+	filter, err := utils.CreateFilter(Query)
+	if err != nil {
+		return nil, err
+	}
+
+	events, err := e.EventRepository.Search(context.Background(), filter)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(EventListOutput, 0)
+	for _, event := range events {
+		result = append(result, EventOutput(event))
+	}
+
+	return &result, nil
 }
 
 func metricCreate(e *v1.Event) {

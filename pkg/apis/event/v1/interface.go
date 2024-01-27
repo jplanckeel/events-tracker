@@ -20,8 +20,9 @@ type EventGetter interface {
 type EventInterface interface {
 	Create(ctx context.Context, Event *Event) (*Event, error)
 	List(ctx context.Context) ([]Event, error)
-	Get(ctx context.Context, EventGet map[string]interface{}) (*Event, error)
+	Get(ctx context.Context, filter map[string]interface{}) (*Event, error)
 	Count(ctx context.Context) (int64, error)
+	Search(ctx context.Context, filter map[string]interface{}) ([]Event, error)
 }
 
 // eventsTracker implements EventInterface
@@ -71,10 +72,10 @@ func (c *eventsTracker) Create(ctx context.Context, EventInsert *Event) (result 
 }
 
 // Get an Event and creates it.  Returns the server's representation of the Event, and an error, if there is any.
-func (c *eventsTracker) Get(ctx context.Context, EventGet map[string]interface{}) (result *Event, err error) {
+func (c *eventsTracker) Get(ctx context.Context, filter map[string]interface{}) (result *Event, err error) {
 	result = &Event{}
 
-	err = c.collection.FindOne(context.TODO(), EventGet).Decode(&result)
+	err = c.collection.FindOne(context.TODO(), filter).Decode(&result)
 	return
 }
 
@@ -82,5 +83,31 @@ func (c *eventsTracker) Get(ctx context.Context, EventGet map[string]interface{}
 func (c *eventsTracker) Count(ctx context.Context) (count int64, err error) {
 	opts := options.Count().SetHint("_id_")
 	count, err = c.collection.CountDocuments(context.TODO(), bson.D{}, opts)
+	return
+}
+
+// Search and returns the list of Events that match those selectors.
+func (c *eventsTracker) Search(ctx context.Context, filter map[string]interface{}) (results []Event, err error) {
+
+	fmt.Println(filter)
+
+	// Créer une date au format ISO
+	//dateIso := "2024-01-20T00:00:00Z"
+	//parsedDate, err := time.Parse(time.RFC3339, dateIso)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//debug := bson.D{{Key: "metadata.createdat", Value: bson.D{{Key: "$gte", Value: parsedDate}}}}
+	//fmt.Println(debug)
+	cursor, err := c.collection.Find(context.TODO(), filter)
+
+	//var results []Event
+	// check for errors in the conversion
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		fmt.Println(err)
+		//panic(err)
+	}
+	//defer cursor.Close(context.Background())
+
 	return
 }

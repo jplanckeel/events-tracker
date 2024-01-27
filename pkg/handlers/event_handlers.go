@@ -30,6 +30,7 @@ type IEventHandlers interface {
 	Create(w http.ResponseWriter, r *http.Request)
 	List(w http.ResponseWriter, r *http.Request)
 	GetId(w http.ResponseWriter, r *http.Request)
+	Search(w http.ResponseWriter, r *http.Request)
 }
 
 type EventHandlers struct {
@@ -51,7 +52,7 @@ func NewEventHandlers(userService services.IEventService) IEventHandlers {
 // @Param 		 data body CreateDTO true "The Request body"
 // @Success      200  {object}  services.EventOutput
 // @Failure      500  {object}  string
-// @Router       /api/v1/events/ [post]
+// @Router       /api/v1/event/ [post]
 func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	var query CreateDTO
 	err := json.NewDecoder(r.Body).Decode(&query)
@@ -122,7 +123,7 @@ func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Success      200  {object}  services.EventListOutput
 // @Failure      400  {object}  string
-// @Router       /api/v1/events/ [get]
+// @Router       /api/v1/events/list [get]
 func (e *EventHandlers) List(w http.ResponseWriter, r *http.Request) {
 	Events, err := e.eventService.List()
 	if err != nil {
@@ -142,11 +143,47 @@ func (e *EventHandlers) List(w http.ResponseWriter, r *http.Request) {
 // @Param        id path string true  "xxxxx-xxxxxx-xxxxx-xxxxxx"
 // @Success      200  {object}  services.EventOutput
 // @Failure      404  {object}  string
-// @Router       /api/v1/events/{id} [get]
+// @Router       /api/v1/event/{id} [get]
 func (e *EventHandlers) GetId(w http.ResponseWriter, r *http.Request) {
 	var EventId = mux.Vars(r)["id"]
 
 	event, err := e.eventService.GetId(EventId)
+	if err != nil {
+		slog.Error("%s", err)
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	utils.WriteResponse(w, http.StatusOK, event)
+}
+
+// Get
+// @Summary      Search Events
+// @Description  Search Events
+// @Tags         event
+// @Accept       json
+// @Produce      json
+// @Param        source query string false  "github_action"
+// @Param        type query string false  "deployment"
+// @Param        priority query string false  "P1"
+// @Param        status query string false  "success"
+// @Param        start_date query string false  "2024-01-21T12:09"
+// @Param        end_date query string false  "2024-01-21T12:09"
+// @Success      200  {object}  services.EventListOutput
+// @Failure      404  {object}  string
+// @Router       /api/v1/events/search [get]
+func (e *EventHandlers) Search(w http.ResponseWriter, r *http.Request) {
+
+	p := &v1.EventSearch{
+		Source:    r.FormValue("source"),
+		EventType: r.FormValue("type"),
+		Priority:  r.FormValue("priority"),
+		Status:    r.FormValue("status"),
+		StartDate: r.FormValue("start_date"),
+		EndDate:   r.FormValue("end_date"),
+	}
+
+	event, err := e.eventService.Search(p)
 	if err != nil {
 		slog.Error("%s", err)
 		http.Error(w, err.Error(), http.StatusNotFound)

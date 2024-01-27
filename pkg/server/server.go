@@ -53,10 +53,11 @@ func (s *Server) Initialize() error {
 
 	router.HandleFunc("/status", s.statusHandler.Index)
 
-	apiv1 := router.PathPrefix("/api/v1/events").Subrouter()
-	apiv1.HandleFunc("/", s.eventHandlers.List).Methods(http.MethodGet)
-	apiv1.HandleFunc("/", s.eventHandlers.Create).Methods(http.MethodPost)
-	apiv1.HandleFunc("/{id}", s.eventHandlers.GetId).Methods(http.MethodGet)
+	apiv1 := router.PathPrefix("/api/v1").Subrouter()
+	apiv1.HandleFunc("/event/", s.eventHandlers.Create).Methods(http.MethodPost)
+	apiv1.HandleFunc("/event/{id}", s.eventHandlers.GetId).Methods(http.MethodGet)
+	apiv1.HandleFunc("/events/list", s.eventHandlers.List).Methods(http.MethodGet)
+	apiv1.HandleFunc("/events/search", s.eventHandlers.Search).Methods(http.MethodGet)
 
 	//define logger for http server error
 	handler := slog.NewJSONHandler(os.Stdout, nil)

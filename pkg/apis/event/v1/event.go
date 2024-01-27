@@ -31,9 +31,11 @@ type Event struct {
 	Metadata   EventMetadata
 }
 
-/*
-// unsued for the moment
-type EventList struct {
-	Events []Event
+type EventSearch struct {
+	Source    string
+	EventType string
+	Priority  string
+	Status    string
+	StartDate string
+	EndDate   string
 }
-*/
