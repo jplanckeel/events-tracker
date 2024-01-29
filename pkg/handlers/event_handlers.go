@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 	"github.com/jplanckeel/events-tracker/pkg/services"
 	"github.com/jplanckeel/events-tracker/pkg/utils"
@@ -172,6 +173,7 @@ func (e *EventHandlers) GetId(w http.ResponseWriter, r *http.Request) {
 // @Param        type query string false  "deployment"
 // @Param        priority query string false  "P1"
 // @Param        status query string false  "success"
+// @Param        service query string false  "events-tracker"
 // @Param        start_date query string false  "2024-01-21T12:09"
 // @Param        end_date query string false  "2024-01-21T12:09"
 // @Success      200  {object}  services.EventListOutput
@@ -184,6 +186,7 @@ func (e *EventHandlers) Search(w http.ResponseWriter, r *http.Request) {
 		EventType: r.FormValue("type"),
 		Priority:  r.FormValue("priority"),
 		Status:    r.FormValue("status"),
+		Service:   r.FormValue("service"),
 		StartDate: r.FormValue("start_date"),
 		EndDate:   r.FormValue("end_date"),
 	}

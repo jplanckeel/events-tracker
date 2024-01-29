@@ -36,6 +36,7 @@ type EventSearch struct {
 	EventType string
 	Priority  string
 	Status    string
+	Service   string
 	StartDate string
 	EndDate   string
 }

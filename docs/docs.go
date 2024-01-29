@@ -141,7 +141,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "github-action",
+                        "description": "github_action",
                         "name": "source",
                         "in": "query"
                     },
@@ -161,6 +161,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "success",
                         "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "events-tracker",
+                        "name": "service",
                         "in": "query"
                     },
                     {

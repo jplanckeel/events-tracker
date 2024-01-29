@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
-	"github.com/jplanckeel/events-tracker/pkg/utils"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
+
+	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
+	"github.com/jplanckeel/events-tracker/pkg/utils"
 )
 
 var metricEvents = promauto.NewCounterVec(prometheus.CounterOpts{
@@ -31,6 +32,7 @@ type EventSearch struct {
 	EventType string
 	Priority  string
 	Status    string
+	Service   string
 	StartDate string
 	EndDate   string
 }

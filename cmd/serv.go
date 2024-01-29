@@ -1,18 +1,19 @@
 package cmd
 
 import (
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/spf13/cobra"
+
 	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 	"github.com/jplanckeel/events-tracker/pkg/exporter"
 	"github.com/jplanckeel/events-tracker/pkg/handlers"
 	"github.com/jplanckeel/events-tracker/pkg/server"
 	"github.com/jplanckeel/events-tracker/pkg/services"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/spf13/cobra"
 )
 
 var serv = &cobra.Command{
 	Use:   "serv",
-	Short: "Run event-tracker server",
+	Short: "Run events-tracker server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		client := v1.NewClient()

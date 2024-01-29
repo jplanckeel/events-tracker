@@ -3,8 +3,9 @@ package exporter
 import (
 	"log/slog"
 
-	"github.com/jplanckeel/events-tracker/pkg/services"
 	"github.com/prometheus/client_golang/prometheus"
+
+	"github.com/jplanckeel/events-tracker/pkg/services"
 )
 
 type eventsTrackerCollector struct {

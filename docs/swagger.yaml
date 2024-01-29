@@ -151,7 +151,7 @@ paths:
       - application/json
       description: Search Events
       parameters:
-      - description: github-action
+      - description: github_action
         in: query
         name: source
         type: string
@@ -166,6 +166,10 @@ paths:
       - description: success
         in: query
         name: status
+        type: string
+      - description: events-tracker
+        in: query
+        name: service
         type: string
       - description: 2024-01-21T12:09
         in: query

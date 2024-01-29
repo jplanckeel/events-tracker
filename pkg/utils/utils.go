@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 	"go.mongodb.org/mongo-driver/bson"
+
+	v1 "github.com/jplanckeel/events-tracker/pkg/apis/event/v1"
 )
 
 var metadataPriority = map[string]bool{
@@ -64,6 +65,9 @@ func CreateFilter(p *v1.EventSearch) (map[string]interface{}, error) {
 	}
 	if p.Status != "" {
 		filter["attributes.status"] = p.Status
+	}
+	if p.Service != "" {
+		filter["attributes.service"] = p.Service
 	}
 	if p.StartDate != "" && p.EndDate != "" {
 		s, err := parseDate(p.StartDate)

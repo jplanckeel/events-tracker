@@ -10,8 +10,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	_ "github.com/jplanckeel/events-tracker/docs"
 	httpSwagger "github.com/swaggo/http-swagger"
+
+	_ "github.com/jplanckeel/events-tracker/docs"
 
 	"github.com/jplanckeel/events-tracker/pkg/handlers"
 )

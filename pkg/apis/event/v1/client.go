@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jplanckeel/events-tracker/pkg/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/jplanckeel/events-tracker/pkg/config"
 )
 
 // EventsV1Client is used to interact with features
