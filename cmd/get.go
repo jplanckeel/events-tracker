@@ -39,6 +39,10 @@ var get = &cobra.Command{
 	Short: "Cli to get events in events-tracker",
 	Run: func(cmd *cobra.Command, args []string) {
 
+		if os.Getenv("EVENTS_TRACKER_HOST") != "" {
+			config.host = os.Getenv("EVENTS_TRACKER_HOST")
+		}
+
 		transport := httptransport.New(
 			config.host, "/", []string{"http"})
 		c := client.New(transport, nil)
@@ -67,6 +71,13 @@ func init() {
 	rootCmd.AddCommand(get)
 	get.PersistentFlags().StringVar(&config.host, "host", "localhost:9101", "host for events-tracker api")
 	get.PersistentFlags().StringVarP(&config.output, "output", "o", "", "output format 'wide'")
+	get.PersistentFlags().StringVar(&f.startDate, "start_date", "", "filter events created after start_date ex:2024-01-01")
+	get.PersistentFlags().StringVar(&f.endDate, "end_date", "", "filter events before after end_date ex:2024-01-01")
+	get.PersistentFlags().StringVar(&f.eventType, "type", "", "filter events with type: 'deployment|incident")
+	get.PersistentFlags().StringVar(&f.service, "service", "", "filter events with service name")
+	get.PersistentFlags().StringVar(&f.status, "status", "", "filter events with status: 'start|success|error|failed|...")
+	get.PersistentFlags().StringVar(&f.source, "source", "", "filter events with source")
+	get.PersistentFlags().StringVar(&f.priority, "priority", "", "filter events with priority: 'P1|P2|P3|P4")
 
 }
 
