@@ -36,7 +36,7 @@ type ClientService interface {
 
 	GetAPIV1EventsSearch(params *GetAPIV1EventsSearchParams, opts ...ClientOption) (*GetAPIV1EventsSearchOK, error)
 
-	PostAPIV1Event(params *PostAPIV1EventParams, opts ...ClientOption) (*PostAPIV1EventOK, error)
+	PostAPIV1Event(params *PostAPIV1EventParams, opts ...ClientOption) (*PostAPIV1EventCreated, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -166,7 +166,7 @@ PostAPIV1Event creates an event
 
 Create an Event
 */
-func (a *Client) PostAPIV1Event(params *PostAPIV1EventParams, opts ...ClientOption) (*PostAPIV1EventOK, error) {
+func (a *Client) PostAPIV1Event(params *PostAPIV1EventParams, opts ...ClientOption) (*PostAPIV1EventCreated, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPostAPIV1EventParams()
@@ -191,7 +191,7 @@ func (a *Client) PostAPIV1Event(params *PostAPIV1EventParams, opts ...ClientOpti
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*PostAPIV1EventOK)
+	success, ok := result.(*PostAPIV1EventCreated)
 	if ok {
 		return success, nil
 	}

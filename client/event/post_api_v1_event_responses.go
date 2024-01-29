@@ -23,8 +23,8 @@ type PostAPIV1EventReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *PostAPIV1EventReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 200:
-		result := NewPostAPIV1EventOK()
+	case 201:
+		result := NewPostAPIV1EventCreated()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -40,63 +40,63 @@ func (o *PostAPIV1EventReader) ReadResponse(response runtime.ClientResponse, con
 	}
 }
 
-// NewPostAPIV1EventOK creates a PostAPIV1EventOK with default headers values
-func NewPostAPIV1EventOK() *PostAPIV1EventOK {
-	return &PostAPIV1EventOK{}
+// NewPostAPIV1EventCreated creates a PostAPIV1EventCreated with default headers values
+func NewPostAPIV1EventCreated() *PostAPIV1EventCreated {
+	return &PostAPIV1EventCreated{}
 }
 
 /*
-PostAPIV1EventOK describes a response with status code 200, with default header values.
+PostAPIV1EventCreated describes a response with status code 201, with default header values.
 
-OK
+Created
 */
-type PostAPIV1EventOK struct {
+type PostAPIV1EventCreated struct {
 	Payload *models.ServicesEventOutput
 }
 
-// IsSuccess returns true when this post Api v1 event o k response has a 2xx status code
-func (o *PostAPIV1EventOK) IsSuccess() bool {
+// IsSuccess returns true when this post Api v1 event created response has a 2xx status code
+func (o *PostAPIV1EventCreated) IsSuccess() bool {
 	return true
 }
 
-// IsRedirect returns true when this post Api v1 event o k response has a 3xx status code
-func (o *PostAPIV1EventOK) IsRedirect() bool {
+// IsRedirect returns true when this post Api v1 event created response has a 3xx status code
+func (o *PostAPIV1EventCreated) IsRedirect() bool {
 	return false
 }
 
-// IsClientError returns true when this post Api v1 event o k response has a 4xx status code
-func (o *PostAPIV1EventOK) IsClientError() bool {
+// IsClientError returns true when this post Api v1 event created response has a 4xx status code
+func (o *PostAPIV1EventCreated) IsClientError() bool {
 	return false
 }
 
-// IsServerError returns true when this post Api v1 event o k response has a 5xx status code
-func (o *PostAPIV1EventOK) IsServerError() bool {
+// IsServerError returns true when this post Api v1 event created response has a 5xx status code
+func (o *PostAPIV1EventCreated) IsServerError() bool {
 	return false
 }
 
-// IsCode returns true when this post Api v1 event o k response a status code equal to that given
-func (o *PostAPIV1EventOK) IsCode(code int) bool {
-	return code == 200
+// IsCode returns true when this post Api v1 event created response a status code equal to that given
+func (o *PostAPIV1EventCreated) IsCode(code int) bool {
+	return code == 201
 }
 
-// Code gets the status code for the post Api v1 event o k response
-func (o *PostAPIV1EventOK) Code() int {
-	return 200
+// Code gets the status code for the post Api v1 event created response
+func (o *PostAPIV1EventCreated) Code() int {
+	return 201
 }
 
-func (o *PostAPIV1EventOK) Error() string {
-	return fmt.Sprintf("[POST /api/v1/event/][%d] postApiV1EventOK  %+v", 200, o.Payload)
+func (o *PostAPIV1EventCreated) Error() string {
+	return fmt.Sprintf("[POST /api/v1/event/][%d] postApiV1EventCreated  %+v", 201, o.Payload)
 }
 
-func (o *PostAPIV1EventOK) String() string {
-	return fmt.Sprintf("[POST /api/v1/event/][%d] postApiV1EventOK  %+v", 200, o.Payload)
+func (o *PostAPIV1EventCreated) String() string {
+	return fmt.Sprintf("[POST /api/v1/event/][%d] postApiV1EventCreated  %+v", 201, o.Payload)
 }
 
-func (o *PostAPIV1EventOK) GetPayload() *models.ServicesEventOutput {
+func (o *PostAPIV1EventCreated) GetPayload() *models.ServicesEventOutput {
 	return o.Payload
 }
 
-func (o *PostAPIV1EventOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *PostAPIV1EventCreated) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.ServicesEventOutput)
 

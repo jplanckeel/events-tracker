@@ -51,7 +51,7 @@ func NewEventHandlers(userService services.IEventService) IEventHandlers {
 // @Accept       json
 // @Produce      json
 // @Param 		 data body CreateDTO true "The Request body"
-// @Success      200  {object}  services.EventOutput
+// @Success      201  {object}  services.EventOutput
 // @Failure      500  {object}  string
 // @Router       /api/v1/event/ [post]
 func (e *EventHandlers) Create(w http.ResponseWriter, r *http.Request) {

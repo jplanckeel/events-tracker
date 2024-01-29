@@ -16,11 +16,6 @@ import (
 	"github.com/jplanckeel/events-tracker/pkg/utils"
 )
 
-type cfg struct {
-	host   string
-	output string
-}
-
 type filter struct {
 	source    string
 	priority  string
@@ -31,7 +26,6 @@ type filter struct {
 	endDate   string
 }
 
-var config cfg
 var f filter
 
 var get = &cobra.Command{
@@ -73,7 +67,7 @@ func init() {
 	get.PersistentFlags().StringVarP(&config.output, "output", "o", "", "output format 'wide'")
 	get.PersistentFlags().StringVar(&f.startDate, "start_date", "", "filter events created after start_date ex:2024-01-01")
 	get.PersistentFlags().StringVar(&f.endDate, "end_date", "", "filter events before after end_date ex:2024-01-01")
-	get.PersistentFlags().StringVar(&f.eventType, "type", "", "filter events with type: 'deployment|incident")
+	get.PersistentFlags().StringVar(&f.eventType, "type", "deployment", "filter events with type: 'deployment|incident")
 	get.PersistentFlags().StringVar(&f.service, "service", "", "filter events with service name")
 	get.PersistentFlags().StringVar(&f.status, "status", "", "filter events with status: 'start|success|error|failed|...")
 	get.PersistentFlags().StringVar(&f.source, "source", "", "filter events with source")
@@ -86,11 +80,14 @@ func getPrint(payload []*models.ServicesEventOutput) {
 	w := tabwriter.NewWriter(os.Stdout, 00, 0, 1, ' ', 0)
 
 	if config.output == "wide" {
-		header := print.FormatLine("SERVICE", 30) + print.FormatLine("STATUS", 15) + print.FormatLine("PRIORITY", 15) + print.FormatLine("TYPE", 15) + print.FormatLine("CREATED_DATE", 30) + print.FormatLine("PR_ID", 10) + "\n"
+		header := print.FormatLine("SERVICE", 30) + print.FormatLine("STATUS", 15) + print.FormatLine("PRIORITY", 15) + print.FormatLine("TYPE", 15) + print.FormatLine("CREATED_DATE", 30) + print.FormatLine("PR_ID", 5) + "\n"
 		w.Write([]byte(header))
 		for _, p := range payload {
 			pr, _ := utils.CatchPullRequestId(p.Links.PullRequestLink)
-			line := print.FormatLine(*p.Attributes.Service, 30) + print.FormatLine(*p.Attributes.Status, 15) + print.FormatLine(*p.Attributes.Priority, 15) + print.FormatLine(*p.Attributes.Type, 15) + print.FormatLine(p.Metadata.CreatedAt, 30) + print.FormatLine("PR"+pr, 10) + "\n"
+			if len(pr) > 0 {
+				pr = "PR" + pr
+			}
+			line := print.FormatLine(*p.Attributes.Service, 30) + print.FormatLine(*p.Attributes.Status, 15) + print.FormatLine(*p.Attributes.Priority, 15) + print.FormatLine(*p.Attributes.Type, 15) + print.FormatLine(p.Metadata.CreatedAt, 30) + print.FormatLine(pr, 5) + "\n"
 			w.Write([]byte(line))
 		}
 	} else {
