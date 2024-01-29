@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -134,6 +135,21 @@ func parseDate(date string) (t time.Time, err error) {
 func checkDateInverted(startDate time.Time, endDate time.Time) (err error) {
 	if endDate.Before(startDate) {
 		err = fmt.Errorf("start_date %s and end_date %s are inversed", startDate, endDate)
+	}
+	return
+}
+
+func CatchPullRequestId(input string) (id string, err error) {
+	pattern := `.*\/(\d*)$`
+	regex := regexp.MustCompile(pattern)
+	// Trouver des correspondances dans la chaîne d'entrée
+	matches := regex.FindStringSubmatch(input)
+
+	// Vérifier si des correspondances ont été trouvées
+	if len(matches) > 0 {
+		id = matches[1]
+	} else {
+		err = fmt.Errorf("no pull request id found in %s", input)
 	}
 	return
 }

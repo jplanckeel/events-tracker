@@ -13,6 +13,7 @@ import (
 	"github.com/jplanckeel/events-tracker/client/event"
 	"github.com/jplanckeel/events-tracker/models"
 	"github.com/jplanckeel/events-tracker/pkg/print"
+	"github.com/jplanckeel/events-tracker/pkg/utils"
 )
 
 type cfg struct {
@@ -74,10 +75,11 @@ func getPrint(payload []*models.ServicesEventOutput) {
 	w := tabwriter.NewWriter(os.Stdout, 00, 0, 1, ' ', 0)
 
 	if config.output == "wide" {
-		header := print.FormatLine("SERVICE", 30) + print.FormatLine("STATUS", 15) + print.FormatLine("PRIORITY", 15) + print.FormatLine("TYPE", 15) + print.FormatLine("CREATED_DATE", 30) + "\n"
+		header := print.FormatLine("SERVICE", 30) + print.FormatLine("STATUS", 15) + print.FormatLine("PRIORITY", 15) + print.FormatLine("TYPE", 15) + print.FormatLine("CREATED_DATE", 30) + print.FormatLine("PR_ID", 10) + "\n"
 		w.Write([]byte(header))
 		for _, p := range payload {
-			line := print.FormatLine(*p.Attributes.Service, 30) + print.FormatLine(*p.Attributes.Status, 15) + print.FormatLine(*p.Attributes.Priority, 15) + print.FormatLine(*p.Attributes.Type, 15) + print.FormatLine(p.Metadata.CreatedAt, 30) + "\n"
+			pr, _ := utils.CatchPullRequestId(p.Links.PullRequestLink)
+			line := print.FormatLine(*p.Attributes.Service, 30) + print.FormatLine(*p.Attributes.Status, 15) + print.FormatLine(*p.Attributes.Priority, 15) + print.FormatLine(*p.Attributes.Type, 15) + print.FormatLine(p.Metadata.CreatedAt, 30) + print.FormatLine("PR"+pr, 10) + "\n"
 			w.Write([]byte(line))
 		}
 	} else {

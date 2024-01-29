@@ -292,3 +292,50 @@ func TestCheckDateInvertedError(t *testing.T) {
 		assert.Error(t, e, testCase.name)
 	}
 }
+
+func TestCatchPullRequestId(t *testing.T) {
+
+	testCases := []struct {
+		name       string
+		pull       string
+		execptedId string
+	}{
+		{
+			name:       "OK - Test Github Pull Request",
+			pull:       "https://github.com/jplanckeel/events-tracker/pull/1543",
+			execptedId: "1543",
+		},
+		{
+			name:       "OK - Test Gitlab Merge Request",
+			pull:       "https://gitlab.com/jplanckeel/events-tracker/-/merge_requests/1503",
+			execptedId: "1503",
+		},
+	}
+
+	for _, testCase := range testCases {
+		e, _ := CatchPullRequestId(testCase.pull)
+		assert.Equal(t, testCase.execptedId, e)
+	}
+}
+
+func TestCatchPullRequestIdError(t *testing.T) {
+
+	testCases := []struct {
+		name string
+		pull string
+	}{
+		{
+			name: "OK - Url malformed",
+			pull: "https://github.com/jplanckeel/events-tracker/pull/1543/test",
+		},
+		{
+			name: "OK - Url is nill",
+			pull: "",
+		},
+	}
+
+	for _, testCase := range testCases {
+		_, e := CatchPullRequestId(testCase.pull)
+		assert.Error(t, e)
+	}
+}
