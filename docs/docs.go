@@ -313,6 +313,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "This API was built to stock all events in infrastructure",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {
