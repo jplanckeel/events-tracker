@@ -24,3 +24,6 @@ go.work
 *.pem
 *.crt
 *.key
+
+#binary files
+bin/
