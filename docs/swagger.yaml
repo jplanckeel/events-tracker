@@ -1,0 +1,198 @@
+definitions:
+  event.EventAttributes:
+    properties:
+      message:
+        example: deployment service lambda version v0.0.0
+        type: string
+      priority:
+        example: P1
+        type: string
+      related_id:
+        example: 53aa35c8-e659-44b2-882f-f6056e443c99
+        type: string
+      service:
+        example: service-event
+        type: string
+      source:
+        example: github_action
+        type: string
+      status:
+        example: success
+        type: string
+      type:
+        example: deployment
+        type: string
+    required:
+    - message
+    - priority
+    - service
+    - source
+    - status
+    - type
+    type: object
+  event.EventLinks:
+    properties:
+      pull_request_link:
+        example: https://github.com/jplanckeel/events-tracker/pull/240
+        type: string
+    type: object
+  event.EventMetadata:
+    properties:
+      created_at:
+        type: string
+      duration:
+        type: number
+      id:
+        type: string
+    type: object
+  handlers.CreateDTO:
+    properties:
+      attributes:
+        $ref: '#/definitions/event.EventAttributes'
+      links:
+        $ref: '#/definitions/event.EventLinks'
+      title:
+        example: Deployment service lambda
+        type: string
+    type: object
+  services.EventOutput:
+    properties:
+      attributes:
+        $ref: '#/definitions/event.EventAttributes'
+      links:
+        $ref: '#/definitions/event.EventLinks'
+      metadata:
+        $ref: '#/definitions/event.EventMetadata'
+      title:
+        example: Deployment service lambda
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This API was built to stock all events in infrastructure
+  title: Events-Tracker API
+  version: 1.0.0
+paths:
+  /api/v1/event/:
+    post:
+      consumes:
+      - application/json
+      description: Create an Event
+      parameters:
+      - description: The Request body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/services.EventOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create an Event
+      tags:
+      - event
+  /api/v1/event/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an Events by id
+      parameters:
+      - description: xxxxx-xxxxxx-xxxxx-xxxxxx
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.EventOutput'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get an Events by id
+      tags:
+      - event
+  /api/v1/events/list:
+    get:
+      consumes:
+      - application/json
+      description: List all Events
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/services.EventOutput'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: List all Events
+      tags:
+      - event
+  /api/v1/events/search:
+    get:
+      consumes:
+      - application/json
+      description: Search Events
+      parameters:
+      - description: github_action
+        in: query
+        name: source
+        type: string
+      - description: deployment
+        in: query
+        name: type
+        type: string
+      - description: P1
+        in: query
+        name: priority
+        type: string
+      - description: success
+        in: query
+        name: status
+        type: string
+      - description: events-tracker
+        in: query
+        name: service
+        type: string
+      - description: 2024-01-21T12:09
+        in: query
+        name: start_date
+        type: string
+      - description: 2024-01-21T12:09
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/services.EventOutput'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Search Events
+      tags:
+      - event
+swagger: "2.0"
